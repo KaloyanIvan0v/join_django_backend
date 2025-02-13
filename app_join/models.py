@@ -18,7 +18,7 @@ class Contact(models.Model):
 
 class Task(models.Model):
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     state = models.CharField(max_length=200)
     prio = models.CharField(max_length=200)
     dueDate = models.DateField()
