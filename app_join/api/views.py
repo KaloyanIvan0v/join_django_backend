@@ -1,5 +1,5 @@
 from rest_framework import viewsets, generics
-from app_join.models import Task, Contact, User, SubTask
+from app_join.models import Task, Contact, UserProfile, SubTask
 from app_join.api.serializers import TaskSerializer, \
     ContactSerializer, UserSerializer, SubTaskSerializer
 
@@ -15,7 +15,7 @@ class ContactViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = UserProfile.objects.all()
     serializer_class = UserSerializer
 
 

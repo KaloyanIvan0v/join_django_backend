@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app_join.models import Task, SubTask, Contact, User
+from app_join.models import Task, SubTask, Contact, UserProfile
 
 
 class SubTaskSerializer(serializers.ModelSerializer):
@@ -76,5 +76,5 @@ class TaskSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserProfile
         fields = ['id', 'email', 'name', 'password']

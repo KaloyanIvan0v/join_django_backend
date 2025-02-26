@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Contact(models.Model):
@@ -38,8 +39,9 @@ class SubTask(models.Model):
         return self.description
 
 
-class User(models.Model):
-    email = models.EmailField()
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=200)
     name = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
 
