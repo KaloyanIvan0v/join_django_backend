@@ -5,11 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from .serializers import RegistrationSerializer, EmailAuthTokenSerializer
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -22,9 +22,10 @@ class RegistrationView(APIView):
         data = {}
         if serializer.is_valid():
             saved_account = serializer.save()
-            token, created = Token.objects.get_or_create(user=saved_account)
+            refresh = RefreshToken.for_user(saved_account)
             data = {
-                'token': token.key,
+                'token': str(refresh.access_token),
+                'refresh': str(refresh),
                 'username': saved_account.username,
                 'display_name': getattr(saved_account.profile, 'display_name', ''),
                 'email': saved_account.email,
@@ -43,9 +44,10 @@ class CustomLoginView(APIView):
         data = {}
         if serializer.is_valid():
             user = serializer.validated_data['user']
-            token, created = Token.objects.get_or_create(user=user)
+            refresh = RefreshToken.for_user(user)
             data = {
-                'token': token.key,
+                'token': str(refresh.access_token),
+                'refresh': str(refresh),
                 'username': user.username,
                 'display_name': getattr(user.profile, 'display_name', ''),
                 'email': user.email,

@@ -10,6 +10,7 @@ EditorConfig==0.17.0
 jsbeautifier==1.15.1
 json5==0.10.0
 pathspec==0.12.1
+python-decouple==3.8
 PyYAML==6.0.2
 regex==2024.11.6
 six==1.17.0
