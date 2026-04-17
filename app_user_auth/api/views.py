@@ -9,7 +9,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -46,7 +45,7 @@ class CustomLoginView(APIView):
             user = serializer.validated_data['user']
             refresh = RefreshToken.for_user(user)
             data = {
-                'token': str(refresh.access_token),
+                'access': str(refresh.access_token),
                 'refresh': str(refresh),
                 'username': user.username,
                 'display_name': getattr(user.profile, 'display_name', ''),

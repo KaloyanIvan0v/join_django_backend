@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from app_join.models import Task, SubTask, Contact
+from django.db import transaction
 
 
 class SubTaskSerializer(serializers.ModelSerializer):
@@ -43,8 +44,14 @@ class TaskSerializer(serializers.ModelSerializer):
 
         task = Task.objects.create(**validated_data)
 
-        contact_ids = [Contact.objects.get(
-            email=contact['email']).id for contact in assigned_to_data]
+        try:
+            contact_ids = [Contact.objects.get(
+                email=contact['email']).id for contact in assigned_to_data]
+
+        except Contact.DoesNotExist:
+            raise serializers.ValidationError(
+                "One or more contacts in assignedTo do not exist.")
+
         task.assignedTo.set(contact_ids)
 
         for sub_task_data in sub_tasks_data:
@@ -52,6 +59,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
         return task
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         sub_tasks_data = validated_data.pop('subTasks', None)
         assigned_to_data = validated_data.pop('assignedTo', None)
@@ -61,9 +69,15 @@ class TaskSerializer(serializers.ModelSerializer):
         instance.save()
 
         if assigned_to_data is not None:
-            instance.assignedTo.clear()
-            contact_ids = [Contact.objects.get(
-                email=contact['email']).id for contact in assigned_to_data]
+
+            try:
+                instance.assignedTo.clear()
+                contact_ids = [Contact.objects.get(
+                    email=contact['email']).id for contact in assigned_to_data]
+            except Contact.DoesNotExist:
+                raise serializers.ValidationError(
+                    "One or more contacts in assignedTo do not exist.")
+
             instance.assignedTo.set(contact_ids)
 
         if sub_tasks_data is not None:

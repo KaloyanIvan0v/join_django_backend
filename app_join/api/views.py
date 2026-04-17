@@ -6,18 +6,15 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    # permission_classes = [AllowAny]
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
 
 class ContactViewSet(viewsets.ModelViewSet):
-    # permission_classes = [AllowAny]
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
 
 
 class SubTaskViewSet(viewsets.ModelViewSet):
-    # permission_classes = [AllowAny]
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
