@@ -54,3 +54,22 @@ class CustomLoginView(APIView):
         else:
             data = serializer.errors
         return Response(data)
+
+
+class GuestLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            user = User.objects.get(email='guest0012051685433@info.com')
+            refresh = RefreshToken.for_user(user)
+            data = {
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'username': user.username,
+                'display_name': getattr(user.profile, 'display_name', ''),
+                'email': user.email,
+            }
+            return Response(data)
+        except User.DoesNotExist:
+            return Response({'error': 'No guest user configured'}, status=404)
