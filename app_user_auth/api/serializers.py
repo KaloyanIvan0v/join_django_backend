@@ -2,13 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'username']
-        read_only_fields = ['id']
-
-
 class RegistrationSerializer(serializers.ModelSerializer):
     repeated_password = serializers.CharField(write_only=True)
     display_name = serializers.CharField(required=True)
