@@ -16,7 +16,7 @@ class RegistrationView(APIView):
             saved_account = serializer.save()
             refresh = RefreshToken.for_user(saved_account)
             data = {
-                'token': str(refresh.access_token),
+                'access': str(refresh.access_token),
                 'refresh': str(refresh),
                 'username': saved_account.username,
                 'display_name': getattr(saved_account.profile, 'display_name', ''),
@@ -24,7 +24,8 @@ class RegistrationView(APIView):
             }
         else:
             data = serializer.errors
-        return Response(data)
+            return Response(data, status=400)
+        return Response(data, status=201)
 
 
 class CustomLoginView(APIView):
@@ -46,6 +47,7 @@ class CustomLoginView(APIView):
             }
         else:
             data = serializer.errors
+            return Response(data, status=400)
         return Response(data)
 
 
