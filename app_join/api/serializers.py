@@ -37,6 +37,7 @@ class TaskSerializer(serializers.ModelSerializer):
         rep['assignedTo'] = ContactSerializer(contacts, many=True).data
         return rep
 
+    @transaction.atomic
     def create(self, validated_data):
 
         sub_tasks_data = validated_data.pop('subTasks', [])

@@ -36,6 +36,27 @@ class RegistrationTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('email', response.data)
 
+    def test_register_password_mismatch(self):
+        response = self.client.post('/api/v1/auth/register/', {
+            **user1,
+            'repeated_password': 'wrongpassword'
+        }, format='json')
+        self.assertEqual(response.status_code, 400)
+
+    def test_register_missing_display_name(self):
+        response = self.client.post('/api/v1/auth/register/', {
+            'email': 'new@mail.de',
+            'password': 'testpass123',
+            'repeated_password': 'testpass123',
+        }, format='json')
+        self.assertEqual(response.status_code, 400)
+
+    def test_register_response_structure(self):
+        response = self.client.post(
+            '/api/v1/auth/register/', user1, format='json')
+        for field in ['access', 'refresh', 'username', 'display_name', 'email']:
+            self.assertIn(field, response.data)
+
 
 class LoginTests(TestCase):
 
@@ -59,3 +80,28 @@ class LoginTests(TestCase):
         }, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertIn('non_field_errors', response.data)
+
+    def test_login_not_existing_email(self):
+        response = self.client.post('/api/v1/auth/login/', {
+            'email': 'doesnotexist@mail.de',
+            'password': 'testpass123'
+        }, format='json')
+        self.assertEqual(response.status_code, 400)
+
+    def test_login_response_structure(self):
+        response = self.client.post('/api/v1/auth/login/', {
+            'email': user0['email'],
+            'password': user0['password']
+        }, format='json')
+        for field in ['access', 'refresh', 'username', 'display_name', 'email']:
+            self.assertIn(field, response.data)
+
+
+class GuestLoginTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_guest_login_no_guest_user(self):
+        response = self.client.post('/api/v1/auth/guest/')
+        self.assertEqual(response.status_code, 404)
